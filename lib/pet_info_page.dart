@@ -70,6 +70,38 @@ class _PetInfoPageState extends State<PetInfoPage> {
   // }
 
   Future _getDataFromDatabase() async {
+    // Retrieve a document with a specific ID from a collection
+Future<DocumentSnapshot<Map<String, dynamic>>> getDocument(String collectionName, String documentId) async {
+  final doc = await FirebaseFirestore.instance.collection(collectionName).doc(documentId).get();
+  return doc;
+}
+
+// // Example usage
+// const docId = 'SCBFhKWQ777j5jLM9Y1d';
+// const collectionName = 'Pets';
+// final docSnapshot = await getDocument(collectionName, docId);
+// if (docSnapshot.exists) {
+//   // Access the document data
+//   final data = docSnapshot.data();
+//   print(data);
+// } else {
+//   print('Document with ID $docId not found in collection $collectionName');
+// }
+
+// Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getDocumentsByField(String collectionName, String fieldName) async {
+//   final snapshots = await FirebaseFirestore.instance.collection(collectionName).where(fieldName, isEqualTo: fieldValue).get();
+//   return snapshots.docs;
+// }
+
+// // Example usage
+// final collectionName = 'Pets';
+// final fieldName = 'Name';
+// //final fieldValue = 'someValue';
+// final docsSnapshots = await getDocumentsByField(collectionName, fieldName);
+// docsSnapshots.forEach((doc) {
+//   final data = doc.data();
+//   print(data);
+// });
     // await FirebaseFirestore.instance
     //     .collection("students")
     //     .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -118,9 +150,9 @@ class _PetInfoPageState extends State<PetInfoPage> {
               ),
             ]),
             const SizedBox(height: 20),
-            Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.start, children: const [
               Text(
-               'Name ' + widget.Name!,
+               'Name',
               ),
             ]),
             const SizedBox(height: 20),
@@ -210,4 +242,18 @@ class _PetInfoPageState extends State<PetInfoPage> {
       ),
     );
   }
+  List<String> docIDs = [];
+
+    //get docIDs
+    Future getDocId() async{
+      await FirebaseFirestore.instance.collection('Pets').get().then(
+        // ignore: avoid_function_literals_in_foreach_calls
+        (snapshot) => snapshot.docs.forEach((element) {
+          if (kDebugMode) {
+            print(element.reference);
+            docIDs.add(element.reference.id);
+          }
+        })
+      );
+    }
 }

@@ -47,8 +47,8 @@ class MyApp extends StatelessWidget {
             labelStyle: TextStyle(color: Colors.deepPurple),
           ),
         ),
-        //home: const AddPetProfile(),
-        home: PetInfoPage(),
+        home: const AddPetProfile(),
+        //home: const PetInfoPage(),
       );
         }
         
@@ -66,8 +66,8 @@ class MyApp extends StatelessWidget {
         return const MaterialApp(
           debugShowCheckedModeBanner: false,
           title: "PET ADOPTION APP",
-          // //home: AddPetProfile(),
-          home: PetInfoPage(),
+          home: AddPetProfile(),
+          //home: PetInfoPage(),
         );
         }
     );

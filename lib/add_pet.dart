@@ -21,7 +21,6 @@ class AddPetProfile extends StatefulWidget {
 }
 
 class _AddPetProfileState extends State<AddPetProfile> {
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   late final String petCategory;
@@ -45,7 +44,7 @@ class _AddPetProfileState extends State<AddPetProfile> {
         context: context,
         builder: (context) {
           return AlertDialog(
-              title: Text("Please choose an option"),
+              title: const Text("Please choose an option"),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -190,6 +189,7 @@ class _AddPetProfileState extends State<AddPetProfile> {
   createData() async {
     if (kDebugMode) {
       print("Created");
+      Fluttertoast.showToast(msg: "Pet Profile Created Successfully");
     }
 
     DocumentReference documentReference =
@@ -207,7 +207,6 @@ class _AddPetProfileState extends State<AddPetProfile> {
       "Owner name": ownerName,
       "Mobile number": mobileNumber,
       "Email address": emailAddress,
-      //"id": ;
     };
 
     documentReference.set(myPets).whenComplete(() {
@@ -215,21 +214,6 @@ class _AddPetProfileState extends State<AddPetProfile> {
         print("$petName created");
       }
     });
-
-    //   List<String> docIDs = [];
-
-    // //get docIDs
-    // Future getDocId() async{
-    //   await FirebaseFirestore.instance.collection('Pets').get().then(
-    //     // ignore: avoid_function_literals_in_foreach_calls
-    //     (snapshot) => snapshot.docs.forEach((element) {
-    //       if (kDebugMode) {
-    //         print(element.reference);
-    //         docIDs.add(element.reference.id);
-    //       }
-    //     })
-    //   );
-    // }
   }
 
   readData() {
@@ -241,12 +225,12 @@ class _AddPetProfileState extends State<AddPetProfile> {
       }
     });
 
-    FirebaseFirestore.instance.collection('Pets')
-      .get().then<dynamic>((DocumentSnapshot snapshot) async
-      {
-        petName = snapshot.get('Name');
-        
-      } as FutureOr Function(QuerySnapshot<Map<String, dynamic>> value));
+    FirebaseFirestore.instance
+        .collection('Pets')
+        .get()
+        .then<dynamic>((DocumentSnapshot snapshot) async {
+          petName = snapshot.get('Name');
+        } as FutureOr Function(QuerySnapshot<Map<String, dynamic>> value));
   }
 
   updateData() {
@@ -289,23 +273,29 @@ class _AddPetProfileState extends State<AddPetProfile> {
   Widget build(BuildContext context) {
     final Storage storage = Storage();
     return Scaffold(
+        appBar: AppBar(
+        title: const Text('Add your pet for adoption'),
+      ),
         backgroundColor: const Color.fromARGB(95, 248, 244, 244),
         body: SafeArea(
             child: Center(
                 child: SingleChildScrollView(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const  SizedBox(height: 30),
             GestureDetector(
               onTap: () {
                 _showImageDialog();
               },
-
+              
               //Pet Image
-              child: Center(
+              child: const Center(
+                
+
+
                 child: CircleAvatar(
                   radius: 90,
-                  backgroundImage: petImageFile == null
-                      ? const AssetImage("images/petAvatar.jpg")
-                      : Image.file(petImageFile!).image,
+                  backgroundImage: AssetImage("images/petAvatar.jpg"),
+                  backgroundColor: Colors.deepPurple,
                 ),
                 // ElevatedButton(
                 //   onPressed: () async{
@@ -340,6 +330,10 @@ class _AddPetProfileState extends State<AddPetProfile> {
                 // ),
               ),
             ),
+            const SizedBox(height: 10),
+
+            const Text('Pet Avatar'),
+
             const SizedBox(height: 30),
 
             //Pet Category
@@ -473,6 +467,7 @@ class _AddPetProfileState extends State<AddPetProfile> {
               child: DropdownButtonFormField2(
                 focusColor: Colors.white,
                 focusNode: null,
+                buttonHighlightColor: Colors.grey,
                 buttonSplashColor: Colors.deepPurple,
                 itemSplashColor: Colors.deepPurple,
                 selectedItemHighlightColor: Colors.lightGreen,
@@ -707,25 +702,24 @@ class _AddPetProfileState extends State<AddPetProfile> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: GestureDetector(
-                onTap: () async { 
-                  if(petName == null)
-                  {
-                    Fluttertoast.showToast(msg: "Please enter name of your pet");
+                onTap: () async {
+                  if (petName == null) {
+                    Fluttertoast.showToast(
+                        msg: "Please enter name of your pet");
                     return;
                   }
-                  if(petAge == null)
-                  {
+                  if (petAge == null) {
                     Fluttertoast.showToast(msg: "Please enter age of your pet");
                     return;
                   }
-                  if(petLocation == null)
-                  {
-                    Fluttertoast.showToast(msg: "Please enter location of your pet");
+                  if (petLocation == null) {
+                    Fluttertoast.showToast(
+                        msg: "Please enter location of your pet");
                     return;
                   }
-                  if(petBreed == null)
-                  {
-                    Fluttertoast.showToast(msg: "Please enter breed of your pet");
+                  if (petBreed == null) {
+                    Fluttertoast.showToast(
+                        msg: "Please enter breed of your pet");
                     return;
                   }
                   // if(petImageFile == null)
@@ -733,35 +727,48 @@ class _AddPetProfileState extends State<AddPetProfile> {
                   //   Fluttertoast.showToast(msg: "Please add image of your pet");
                   //   return;
                   // }
-                  if(dropdownValueCategory == null)
-                  {
-                    Fluttertoast.showToast(msg: "Please choose type of your pet");
+                  if (dropdownValueCategory == null) {
+                    Fluttertoast.showToast(
+                        msg: "Please choose type of your pet");
                     return;
                   }
-                  if(dropdownValueGender == null)
-                  {
-                    Fluttertoast.showToast(msg: "Please choose gender of your pet");
+                  if (dropdownValueGender == null) {
+                    Fluttertoast.showToast(
+                        msg: "Please choose gender of your pet");
                     return;
                   }
-                  try{
-                    final ref = FirebaseStorage.instance.ref().child('petImages').child('${DateTime.now()}.jpg');
-                    await ref.putFile(petImageFile!);
-                    imageURL = await ref.getDownloadURL();
-                    
-                  
-              
-                    final  uid0 = FirebaseFirestore.instance.collection("Pets").doc();
-                    //FirebaseFirestore.instance.collection("Pets").doc();
-                    FirebaseFirestore.instance.collection('Pets').doc(uid0 as String?).set({
-                      'id': uid0,
-                      'userImage': imageURL,
-                    });
-                    Navigator.canPop(context) ? Navigator.pop(context) : null;
+                  if (mobileNumber == null) {
+                    Fluttertoast.showToast(
+                        msg: "Please choose gender of your pet");
+                    return;
                   }
-                  catch(error)
-                  {
-                    Fluttertoast.showToast(msg: error.toString());
+                  if (ownerName == null) {
+                    Fluttertoast.showToast(
+                        msg: "Please choose gender of your pet");
+                    return;
                   }
+                  if (emailAddress == null) {
+                    Fluttertoast.showToast(
+                        msg: "Please choose gender of your pet");
+                    return;
+                  }
+                  // try{
+                  //   final ref = FirebaseStorage.instance.ref().child('petImages').child('${DateTime.now()}.jpg');
+                  //   await ref.putFile(petImageFile!);
+                  //   imageURL = await ref.getDownloadURL();
+
+                  //   final  uid0 = FirebaseFirestore.instance.collection("Pets").doc();
+                  //   //FirebaseFirestore.instance.collection("Pets").doc();
+                  //   FirebaseFirestore.instance.collection('Pets').doc(uid0 as String?).set({
+                  //     'id': uid0,
+                  //     'userImage': imageURL,
+                  //   });
+                  //   Navigator.canPop(context) ? Navigator.pop(context) : null;
+                  // }
+                  // catch(error)
+                  // {
+                  //   Fluttertoast.showToast(msg: error.toString());
+                  // }
                   createData();
                 },
                 child: Container(
@@ -773,13 +780,14 @@ class _AddPetProfileState extends State<AddPetProfile> {
                   child: const Center(
                     child: Text(
                       //'Add Pet Profile',
-                      'Create',
+                      'ADD PET PROFILE',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
                     ),
+                    
                   ),
                 ),
               ),
@@ -787,95 +795,109 @@ class _AddPetProfileState extends State<AddPetProfile> {
 
             const SizedBox(height: 20),
 
-            //Update data
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: GestureDetector(
-                onTap: () {
-                  updateData();
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      //'Add Pet Profile',
-                      'Update',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // //Update data
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            //   child: GestureDetector(
+            //     onTap: () {
+            //       updateData();
+            //     },
+            //     child: Container(
+            //       padding: const EdgeInsets.all(20),
+            //       decoration: BoxDecoration(
+            //         color: Colors.deepPurple,
+            //         borderRadius: BorderRadius.circular(12),
+            //       ),
+            //       child: const Center(
+            //         child: Text(
+            //           //'Add Pet Profile',
+            //           'Update',
+            //           style: TextStyle(
+            //             color: Colors.white,
+            //             fontWeight: FontWeight.bold,
+            //             fontSize: 18,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
 
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
 
-            //Delete data
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: GestureDetector(
-                onTap: () {
-                  deleteData();
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      //'Add Pet Profile',
-                      'Delete',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // //Delete data
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            //   child: GestureDetector(
+            //     onTap: () {
+            //       deleteData();
+            //     },
+            //     child: Container(
+            //       padding: const EdgeInsets.all(20),
+            //       decoration: BoxDecoration(
+            //         color: Colors.deepPurple,
+            //         borderRadius: BorderRadius.circular(12),
+            //       ),
+            //       child: const Center(
+            //         child: Text(
+            //           //'Add Pet Profile',
+            //           'Delete',
+            //           style: TextStyle(
+            //             color: Colors.white,
+            //             fontWeight: FontWeight.bold,
+            //             fontSize: 18,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
 
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
 
-            //Read data
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: GestureDetector(
-                onTap: () {
-                  readData();
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      //'Add Pet Profile',
-                      'Read',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // //Read data
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            //   child: GestureDetector(
+            //     onTap: () {
+            //       readData();
+            //     },
+            //     child: Container(
+            //       padding: const EdgeInsets.all(20),
+            //       decoration: BoxDecoration(
+            //         color: Colors.deepPurple,
+            //         borderRadius: BorderRadius.circular(12),
+            //       ),
+            //       child: const Center(
+            //         child: Text(
+            //           //'Add Pet Profile',
+            //           'Read',
+            //           style: TextStyle(
+            //             color: Colors.white,
+            //             fontWeight: FontWeight.bold,
+            //             fontSize: 18,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             const SizedBox(height: 20),
           ]),
         ))));
   }
+
+  // List<String> docIDs = [];
+
+  // //get docIDs
+  // Future getDocId() async {
+  //   await FirebaseFirestore.instance.collection('Pets').get().then(
+  //       // ignore: avoid_function_literals_in_foreach_calls
+  //       (snapshot) => snapshot.docs.forEach((element) {
+  //             if (kDebugMode) {
+  //               print(element.reference);
+  //               docIDs.add(element.reference.id);
+  //             }
+  //           }));
+  // }
 }
